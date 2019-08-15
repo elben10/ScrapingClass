@@ -9,6 +9,35 @@ def ratelimit(duration=0.5):
     time.sleep(duration)  # sleep one second.
 
 
+
+class LogFile:
+
+    def __init__(self, file, mode):
+        self.file = file 
+        self.mode = mode
+        self.f = None
+
+    def __str__(self):
+        return f'Logfile {self.file}'
+
+    def __repr__(self):
+        return f'Logfile {self.file} in mode {self.mode}'
+
+    def write(self, content):
+        with open(self.file, self.mode) as f:
+            f.write(content)
+
+    def flush(self):
+        # Deprecated
+        return 
+
+    def read(self):
+        with open(self.file, 'r') as f:
+            content = f.read()
+        return content
+
+
+
 class Connector():
     def __init__(self, 
                  logfile, 
@@ -67,22 +96,30 @@ class Connector():
 
         if os.path.isfile(logfile):
             if overwrite_log == True:
-                self.log = open(logfile, 'w')
+                self.log = LogFile(logfile, 'w')
                 self.log.write(';'.join(header))
+                self.log.mode = 'a'
             else:
-                self.log = open(logfile, 'a')
+                self.log = LogFile(logfile, 'a')
         else:
-            self.log = open(logfile, 'w')
+            self.log = LogFile(logfile, 'w')
             self.log.write(';'.join(header))
-        # load log
-        with open(logfile, 'r') as f:  # open file
 
-            l = f.read().split('\n')  # read and split file by newlines.
-            # set id
-            if len(l) <= 1:
-                self.id = 0
-            else:
-                self.id = int(l[-1][0])+1
+        # load log
+        l = self.log.read().split('\n')
+        if len(l) <= 1:
+            self.id = 0
+        else:
+            self.id = int(l[-1][0])+1
+
+        # with open(logfile, 'r') as f:  # open file
+
+        #     l = f.read().split('\n')  # read and split file by newlines.
+        #     # set id
+        #     if len(l) <= 1:
+        #         self.id = 0
+        #     else:
+        #         self.id = int(l[-1][0])+1
 
     def get(self, url, project_name):
         """Method for connector reliably to the internet, with multiple tries and simple 

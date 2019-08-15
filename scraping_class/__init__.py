@@ -1,2 +1,2 @@
 
-from .scraping_class import *
+from .scraping_class import Connector
