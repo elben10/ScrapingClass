@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='scraping_class',
-      version='0.2',
+      version='0.3',
       description='Webscraper for SDS2019',
       url='https://github.com/elben10/ScrapingClass',
       author='Snorre Ralund, Jakob Jul Elben',
