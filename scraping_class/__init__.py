@@ -1,7 +1,7 @@
 import requests,os,time
 def ratelimit():
     "A function that handles the rate of your calls."
-    time.sleep(1) # sleep one second.
+    time.sleep(0.5) # sleep one second.
 
 class Connector():
   def __init__(self,logfile,overwrite_log=False,connector_type='requests',session=False,path2selenium='',n_tries = 5,timeout=30):
@@ -87,6 +87,7 @@ class Connector():
           #['id','project_name','connector_type','t', 'delta_t', 'url', 'redirect_url','response_size', 'response_code','success','error']
           row = [call_id,project_name,self.connector_type,t,dt,url,redirect_url,size,response_code,success,err] # define row to be written in the log.
           self.log.write('\n'+';'.join(map(str,row))) # write log.
+          self.log.flush()
           return response,call_id # return response and unique identifier.
 
         except Exception as e: # define error condition
@@ -103,6 +104,7 @@ class Connector():
 
           row = [call_id,project_name,self.connector_type,t,dt,url,redirect_url,size,response_code,success,err] # define row
           self.log.write('\n'+';'.join(map(str,row))) # write row to log.
+          self.log.flush()
     else:
       t = time.time()
       ratelimit()
@@ -118,6 +120,7 @@ class Connector():
       response_code = '' # empty response code.
       row = [call_id,project_name,self.connector_type,t,dt,url,redirect_url,size,response_code,success,err] # define row 
       self.log.write('\n'+';'.join(map(str,row))) # write row to log file.
+      self.log.flush()
     # Using selenium it will not return a response object, instead you should call the browser object of the connector.
     ## connector.browser.page_source will give you the html.
-      return call_id
+      return None,call_id
