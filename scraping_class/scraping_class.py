@@ -26,10 +26,6 @@ class LogFile:
         with open(self.file, self.mode) as f:
             f.write(content)
 
-    def flush(self):
-        # Deprecated
-        return 
-
     def read(self):
         with open(self.file, 'r') as f:
             content = f.read()
@@ -103,6 +99,7 @@ class Connector():
         else:
             self.log = LogFile(logfile, 'w')
             self.log.write(';'.join(header))
+            self.log.mode = 'a'
 
         # load log
         l = self.log.read().split('\n')
@@ -152,7 +149,6 @@ class Connector():
                     row = [call_id, project_name, self.connector_type, t, dt,
                            url, redirect_url, size, response_code, success, err]
                     self.log.write('\n'+';'.join(map(str, row)))  # write log.
-                    self.log.flush()
                     # return response and unique identifier.
                     return response, call_id
 
@@ -172,7 +168,6 @@ class Connector():
                            redirect_url, size, response_code, success, err]  # define row
                     # write row to log.
                     self.log.write('\n'+';'.join(map(str, row)))
-                    self.log.flush()
         else:
             t = time.time()
             ratelimit()
@@ -192,7 +187,6 @@ class Connector():
                    redirect_url, size, response_code, success, err]  # define row
             # write row to log file.
             self.log.write('\n'+';'.join(map(str, row)))
-            self.log.flush()
         # Using selenium it will not return a response object, instead you should call the browser object of the connector.
         # connector.browser.page_source will give you the html.
             return None, call_id
