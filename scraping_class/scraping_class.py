@@ -2,13 +2,19 @@
 import requests
 import os
 import time
-
+import urllib
 
 def ratelimit(duration=0.5):
     "A function that handles the rate of your calls."
     time.sleep(duration)  # sleep one second.
 
-
+def construct_query(url, params = None):
+    "Function to construct a url from a url and parameters as a dict. Can handle urls with existing parameters"
+    result = urllib.parse.urlparse(url)
+    if params:
+        join_char = ['?', '&'][bool(result[4])] #Picks the join_char based on whether url parameter string is empty
+        return result.geturl() + '{0}{1}'.format(join_char, '&'.join('{0}={1}'.format(k, v) for (k, v) in params.items()))
+    return result.geturl()
 
 class LogFile:
 
@@ -172,7 +178,7 @@ class Connector():
         else:
             t = time.time()
             ratelimit()
-            url = url +'?{}'.format('&'.join(['{0}={1}'.format(k, v) for (k, v) in params.items()]))
+            url = construct_query(url, params = params)
             self.browser.get(url)  # use selenium get method
             # log
             call_id = self.id  # define unique identifier for the call.
