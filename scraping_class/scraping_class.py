@@ -15,7 +15,6 @@ class LogFile:
     def __init__(self, file, mode):
         self.file = file 
         self.mode = mode
-        self.f = None
 
     def __str__(self):
         return f'Logfile {self.file}'
@@ -112,14 +111,6 @@ class Connector():
         else:
             self.id = int(l[-1][0])+1
 
-        # with open(logfile, 'r') as f:  # open file
-
-        #     l = f.read().split('\n')  # read and split file by newlines.
-        #     # set id
-        #     if len(l) <= 1:
-        #         self.id = 0
-        #     else:
-        #         self.id = int(l[-1][0])+1
 
     def get(self, url, project_name):
         """Method for connector reliably to the internet, with multiple tries and simple 
