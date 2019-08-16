@@ -15,7 +15,6 @@ class LogFile:
     def __init__(self, file, mode):
         self.file = file 
         self.mode = mode
-        self.f = None
 
     def __str__(self):
         return f'Logfile {self.file}'
@@ -26,10 +25,6 @@ class LogFile:
     def write(self, content):
         with open(self.file, self.mode) as f:
             f.write(content)
-
-    def flush(self):
-        # Deprecated
-        return 
 
     def read(self):
         with open(self.file, 'r') as f:
@@ -104,6 +99,7 @@ class Connector():
         else:
             self.log = LogFile(logfile, 'w')
             self.log.write(';'.join(header))
+            self.log.mode = 'a'
 
         # load log
         l = self.log.read().split('\n')
@@ -112,14 +108,6 @@ class Connector():
         else:
             self.id = int(l[-1][0])+1
 
-        # with open(logfile, 'r') as f:  # open file
-
-        #     l = f.read().split('\n')  # read and split file by newlines.
-        #     # set id
-        #     if len(l) <= 1:
-        #         self.id = 0
-        #     else:
-        #         self.id = int(l[-1][0])+1
 
     def get(self, url, project_name, params = None):
         """Method for connector reliably to the internet, with multiple tries and simple 
@@ -162,7 +150,6 @@ class Connector():
                     row = [call_id, project_name, self.connector_type, t, dt,
                            url, redirect_url, size, response_code, success, err]
                     self.log.write('\n'+';'.join(map(str, row)))  # write log.
-                    self.log.flush()
                     # return response and unique identifier.
                     return response, call_id
 
@@ -182,7 +169,6 @@ class Connector():
                            redirect_url, size, response_code, success, err]  # define row
                     # write row to log.
                     self.log.write('\n'+';'.join(map(str, row)))
-                    self.log.flush()
         else:
             t = time.time()
             ratelimit()
@@ -203,7 +189,6 @@ class Connector():
                    redirect_url, size, response_code, success, err]  # define row
             # write row to log file.
             self.log.write('\n'+';'.join(map(str, row)))
-            self.log.flush()
         # Using selenium it will not return a response object, instead you should call the browser object of the connector.
         # connector.browser.page_source will give you the html.
             return None, call_id
