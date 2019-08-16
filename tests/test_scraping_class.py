@@ -58,6 +58,6 @@ def test_ConnectorGetOverwrite():
     # happens between initializations of the class
     # only.
     _ConnectorGetOverWrite()
-#    _ConnectorGetOverWrite()
+    _ConnectorGetOverWrite()
 
 
