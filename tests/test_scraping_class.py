@@ -60,4 +60,21 @@ def test_ConnectorGetOverwrite():
     _ConnectorGetOverWrite()
     _ConnectorGetOverWrite()
 
+def test_construct_query():
+    url = 'http://random.url'
+    params = {'key2': 'val2', 'key3': 'val3'}
+    assert construct_query(url, params) == "http://random.url?key2=val2&key3=val3"
+    
+    #Existing '?'
+    url = 'http://random.url?'
+    params = {'key2': 'val2'}
+    assert construct_query(url, params) == "http://random.url?key2=val2"
+    
+    #Existing parameters
+    url = 'http://random.url?key1=val1'
+    params = {'key2': 'val2', 'key3': 'val3'}
+    assert construct_query(url, params) == "http://random.url?key1=val1&key2=val2&key3=val3"
 
+    #No additional parameters
+    url = 'http://random.url?key1=val1'
+    assert construct_query(url) == "http://random.url?key1=val1"
