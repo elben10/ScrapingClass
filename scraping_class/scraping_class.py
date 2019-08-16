@@ -2,13 +2,19 @@
 import requests
 import os
 import time
-
+import urllib
 
 def ratelimit(duration=0.5):
     "A function that handles the rate of your calls."
     time.sleep(duration)  # sleep one second.
 
-
+def construct_query(url, params = None):
+    "Function to construct a url from a url and parameters as a dict. Can handle urls with existing parameters"
+    result = urllib.parse.urlparse(url)
+    if params:
+        join_char = "&" if result[4] else "?" #Picks the join_char based on whether url parameter string is empty
+        return result.geturl() + '{0}{1}'.format(join_char, '&'.join('{0}={1}'.format(k, v) for (k, v) in params.items()))
+    return result.geturl()
 
 class LogFile:
 
@@ -109,7 +115,7 @@ class Connector():
             self.id = int(l[-1][0])+1
 
 
-    def get(self, url, project_name):
+    def get(self, url, project_name, params = None):
         """Method for connector reliably to the internet, with multiple tries and simple 
             error handling, as well as default logging function.
         Input url and the project name for the log (i.e. is it part of mapping the domain, 
@@ -119,6 +125,7 @@ class Connector():
         url -- str, url
         project_name -- str, Name used for analyzing the log. Use case could be the 
                             'Mapping of domain','Meta_data_collection','main data collection'. 
+        params -- dict, Mapping of parameters to be used in the url.
         """
 
         # make sure the default csv seperator is not in the project_name.
@@ -130,7 +137,7 @@ class Connector():
                 t = time.time()
                 try:  # error handling
                     response = self.session.get(
-                        url, timeout=self.timeout)  # make get call
+                        url, params = params, timeout=self.timeout)  # make get call
 
                     # define python error variable as empty assumming success.
                     err = ''
@@ -171,6 +178,7 @@ class Connector():
         else:
             t = time.time()
             ratelimit()
+            url = construct_query(url, params = params)
             self.browser.get(url)  # use selenium get method
             # log
             call_id = self.id  # define unique identifier for the call.
