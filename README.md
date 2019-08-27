@@ -14,7 +14,7 @@ Development version
 First we import the module and initiates the `Connector` class, and choose a file to write the log to.
 ```python
 import scraping_class
-conn = scraping_class.Connector(logfile="log.csv", overwrite_log=True)
+conn = scraping_class.Connector(logfile="log.csv", overwrite_log=False)
 ```
 
 The code above creates a csv file named `log.csv` which looks like this
